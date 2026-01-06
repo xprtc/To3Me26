@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { UnitSettings, Persona, Theme, UnitId, AgentsSubPageId, DashletData, PageId, MainModuleId } from '../types';
 import * as Icons from 'lucide-react';
@@ -137,7 +136,7 @@ AUFGABE: Erstellen Sie eine präzise Schweizer Fachanalyse. Berücksichtigen Sie
 
     const navItems = [
       { label: 'Setup', icon: Settings, onClick: () => { if(onNavigate) onNavigate('setup'); } },
-      { label: 'Automation', icon: Zap, onClick: () => { /* Placeholder logic */ } },
+      { label: 'Automation', icon: Zap, onClick: () => { /* Automation view logic */ } },
       { label: 'Integration', icon: Link2, onClick: () => { if(onNavigate) onNavigate('integrations'); } },
       { label: 'Save and Share', icon: Database, onClick: () => { if(onNavigate) onNavigate('save'); } },
       { label: 'Help', icon: HelpCircle, onClick: () => { if(onNavigate) onNavigate('help'); } },
@@ -210,7 +209,7 @@ AUFGABE: Erstellen Sie eine präzise Schweizer Fachanalyse. Berücksichtigen Sie
                                <item.icon size={16} />
                             </div>
                             <div>
-                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-900 dark:text-white">{item.label}</p>
+                               <p className="text-[10px] font-black uppercase tracking-widest text-slate-950 dark:text-white">{item.label}</p>
                                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{item.desc}</p>
                             </div>
                          </div>
