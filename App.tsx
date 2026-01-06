@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { UnitSettings, PageId, Persona, Theme, UnitId, MainModuleId, CRMSubPageId, OfficeSubPageId, ProjectsSubPageId, AgentsSubPageId } from './types';
-import { DEFAULTS, PERSONAS } from './constants';
+import { UnitSettings, PageId, Persona, Theme, UnitId, MainModuleId, CRMSubPageId, OfficeSubPageId, ProjectsSubPageId, AgentsSubPageId, ProjectRecord } from './types';
+import { DEFAULTS, PERSONAS, PROJECTS_DUMMY } from './constants';
 import Navbar from './components/Navbar';
 import DashboardView from './components/DashboardView';
 import CRMView from './components/CRMView';
@@ -27,6 +27,16 @@ const App: React.FC = () => {
   const [isGlobalEditMode, setIsGlobalEditMode] = useState(false);
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   
+  const [projects, setProjects] = useState<ProjectRecord[]>(() => {
+    const saved = localStorage.getItem('expertico_projects_v7.0');
+    return saved ? JSON.parse(saved) : PROJECTS_DUMMY;
+  });
+
+  const [personas, setPersonas] = useState<Persona[]>(() => {
+    const saved = localStorage.getItem('expertico_personas_v7.0');
+    return saved ? JSON.parse(saved) : PERSONAS;
+  });
+
   const [settings, setSettings] = useState<UnitSettings>(() => {
     const saved = localStorage.getItem('expertico_settings_v7.0');
     return saved ? JSON.parse(saved) : DEFAULTS;
@@ -36,6 +46,14 @@ const App: React.FC = () => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('expertico_theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem('expertico_projects_v7.0', JSON.stringify(projects));
+  }, [projects]);
+
+  useEffect(() => {
+    localStorage.setItem('expertico_personas_v7.0', JSON.stringify(personas));
+  }, [personas]);
 
   const updateSettings = (newSettings: Partial<UnitSettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));
@@ -56,20 +74,78 @@ const App: React.FC = () => {
     setIsWizardOpen(true);
   };
 
+  const handleWizardComplete = (data: any) => {
+    if (data.type === 'project') {
+      const newProject: ProjectRecord = {
+        id: 'p' + (projects.length + 1),
+        name: data.title || 'Neues Projekt',
+        client: data.newClientName || data.client || 'Unbekannt',
+        status: 'planning',
+        budget: Number(data.budget) || (data.productId ? 1000 : 0),
+        deadline: data.deadline || new Date().toISOString().split('T')[0],
+        leadAgent: personas.find(p => p.id === data.agentId)?.name || 'Admin',
+        progress: 0
+      };
+      setProjects([newProject, ...projects]);
+      setCurrentPage('projects_page');
+      setActiveModule('projects');
+      setActiveProjectsPage('projects');
+    }
+    setIsWizardOpen(false);
+  };
+
+  const updatePersona = (updated: Persona) => {
+    setPersonas(prev => prev.map(p => p.id === updated.id ? updated : p));
+  };
+
+  const addPersona = (unitId: UnitId) => {
+    const newPersona: Persona = {
+      id: 'custom_' + Date.now(),
+      unitId,
+      name: 'Neuer Agent',
+      role: 'Spezialist',
+      exp: '5J',
+      bio: 'Beschreibung hinzufügen...',
+      think: 'Input -> Prozess -> Output',
+      icon: 'Bot',
+      modes: [{ id: 'std', label: 'Standard', help: '' }],
+      checklist: ['Check 1'],
+      systemPrompt: 'Du bist ein KI-Agent für...',
+      advancedOptions: []
+    };
+    setPersonas([...personas, newPersona]);
+    setActiveAgentId(newPersona.id);
+    setCurrentPage('agents');
+    setActiveAgentsPage('profile');
+  };
+
   const renderContent = () => {
     switch (currentPage) {
       case 'dashboard': 
-        return <DashboardView activeUnitId={activeUnitId} onSelectUnit={setActiveUnitId} onSelectAgent={setActiveAgentId} theme={theme} personas={PERSONAS} />;
+        return <DashboardView activeUnitId={activeUnitId} onSelectUnit={setActiveUnitId} onSelectAgent={setActiveAgentId} theme={theme} personas={personas} />;
       case 'crm_page':
         return <CRMView activePage={activeCRMPage} theme={theme} onSelectPage={setActiveCRMPage} isGlobalEditMode={isGlobalEditMode} />;
       case 'office_page':
         return <OfficeView activePage={activeOfficePage} onSelectPage={setActiveOfficePage} theme={theme} isGlobalEditMode={isGlobalEditMode} />;
       case 'projects_page':
-        return <ProjectsView activePage={activeProjectsPage} onSelectPage={setActiveProjectsPage} theme={theme} isGlobalEditMode={isGlobalEditMode} onOpenWizard={() => setIsWizardOpen(true)} />;
+        return <ProjectsView projects={projects} activePage={activeProjectsPage} onSelectPage={setActiveProjectsPage} theme={theme} isGlobalEditMode={isGlobalEditMode} onOpenWizard={() => setIsWizardOpen(true)} />;
       case 'setup': 
         return <SetupView settings={settings} onUpdate={updateSettings} theme={theme} activeUnitId={activeUnitId} />;
       case 'agents': 
-        return <AgentsView settings={settings} personas={PERSONAS} activeUnitId={activeUnitId} activeAgentId={activeAgentId} theme={theme} activePage={activeAgentsPage} onSelectPage={setActiveAgentsPage} isGlobalEditMode={isGlobalEditMode} />;
+        return <AgentsView 
+          settings={settings} 
+          personas={personas} 
+          activeUnitId={activeUnitId} 
+          activeAgentId={activeAgentId} 
+          theme={theme} 
+          activePage={activeAgentsPage} 
+          onSelectPage={setActiveAgentsPage} 
+          isGlobalEditMode={isGlobalEditMode} 
+          onUpdatePersona={updatePersona} 
+          onAddPersona={addPersona}
+          onNavigate={setCurrentPage}
+          onModuleChange={setActiveModule}
+        />;
       case 'integrations': 
         return <IntegrationsView theme={theme} />;
       case 'save': 
@@ -79,7 +155,7 @@ const App: React.FC = () => {
       case 'contact_page':
         return <div className="p-32 text-center"><h2 className="text-3xl font-black uppercase opacity-20">Direktkontakt Zentrale</h2><p className="mt-4 text-slate-400 font-bold uppercase tracking-widest text-xs">V7.0 Secure Connection</p></div>;
       default: 
-        return <DashboardView activeUnitId={null} onSelectUnit={setActiveUnitId} onSelectAgent={setActiveAgentId} theme={theme} personas={PERSONAS} />;
+        return <DashboardView activeUnitId={null} onSelectUnit={setActiveUnitId} onSelectAgent={setActiveAgentId} theme={theme} personas={personas} />;
     }
   };
 
@@ -120,10 +196,7 @@ const App: React.FC = () => {
 
       {isWizardOpen && (
         <Wizard 
-          onComplete={(data) => {
-            console.log("Creation Completed:", data);
-            setIsWizardOpen(false);
-          }} 
+          onComplete={handleWizardComplete} 
           onSkip={() => setIsWizardOpen(false)} 
         />
       )}

@@ -135,6 +135,8 @@ export interface Persona {
   bio: string;
   modes: { id: string; label: string; help: string }[];
   checklist: string[];
+  systemPrompt?: string;
+  advancedOptions?: string[];
 }
 
 export interface DashletData {

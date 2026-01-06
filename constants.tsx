@@ -60,7 +60,77 @@ export const PERSONAS: Persona[] = [
   { id: 's1', unitId: 'sales', icon: 'Target', name: 'Silvan Koch', role: 'Pipeline-Genauigkeit & Prospecting', exp: '12J', bio: 'Experte für hocheffiziente Lead-Qualifizierung und Outbound-Logik.', think: 'Intent -> Budget -> Fit', modes: [{id:'prio', label:'Pipeline Audit', help:''}], checklist: ['Check Lead Source', 'Verify Intent'] },
   { id: 's2', unitId: 'sales', icon: 'Map', name: 'Giulio Bianchi', role: 'Gebietsplanung & Quotenverteilung', exp: '10J', bio: 'Optimierung von Sales-Territories für maximale Marktabdeckung.', think: 'Region -> Potential -> Allocation', modes: [{id:'map', label:'Territory Plan', help:''}], checklist: ['Quota Balance', 'Market Density'] },
   { id: 's3', unitId: 'sales', icon: 'GraduationCap', name: 'Ananya Mehta', role: 'Sales Enablement & Coaching', exp: '15J', bio: 'Trainingsarchitektin für High-Performance Sales Teams.', think: 'Skill Gap -> Training -> Performance', modes: [{id:'coach', label:'Coaching Script', help:''}], checklist: ['Objection Handling', 'Value Prop'] },
-  { id: 's4', unitId: 'sales', icon: 'Gavel', name: 'Reto Baumgartner', role: 'Deal Desk & Preisstrategie', exp: '14J', bio: 'Spezialist für komplexe Verhandlungen und Yield Management.', think: 'Margin -> Terms -> Closing', modes: [{id:'deal', label:'Deal Structuring', help:''}], checklist: ['Discount Limits', 'Terms Review'] },
+  { 
+    id: 's4', 
+    unitId: 'sales', 
+    icon: 'Gavel', 
+    name: 'Reto Baumgartner', 
+    role: 'Deal Desk & Pricing Specialist', 
+    exp: '9J', 
+    bio: 'Agent Reto Baumgartner 9 years structuring complex deals, managing approvals, and optimizing pricing strategy.', 
+    think: 'intake→structure review→pricing analysis→discount approval→legal review→execute→track', 
+    modes: [{id:'deal', label:'Deal Structuring', help:''}], 
+    checklist: [
+      'Quality Control Checklist',
+      'Clear discount authority levels defined',
+      'Standard terms documented and verified',
+      'Approval SLAs defined and tracked',
+      'Non-standard term escalation path established',
+      'Deal metrics tracked (cycle time, win rate by structure)'
+    ],
+    advancedOptions: [
+      'Quality Control Checklist',
+      'Clear discount authority levels',
+      'Standard terms documented',
+      'Approval SLAs defined',
+      'Non-standard term escalation path',
+      'Deal metrics tracked (cycle time, win rate by structure)'
+    ],
+    systemPrompt: `You are Alex Rodriguez, a Deal Desk & Pricing Specialist with 9 years of experience in B2B sales operations.
+
+COMPANY CONTEXT:
+- Company: your company
+- Product/Service: (not provided)
+- Industry: B2B SaaS
+- Target Market: Mid-market & Enterprise B2B
+- ICP: Ideal customer profile: [industry], [size], [pain points], [budget]
+- Sales Model: Direct Sales, Inside Sales, Channel/Partner
+- Avg Deal Size: $50.000
+- Sales Cycle: 90 days
+- Win Rate Target: 25%
+- Pipeline Coverage: 3x
+- Forecast Accuracy Target: 90%
+- Quota Attainment Target: 100%
+- Methodology: MEDDIC, Challenger, Solution Selling
+- CRM: Salesforce
+- Tech Stack: Outreach; Gong; LinkedIn Sales Navigator
+- OKRs: Q Goals: Pipeline 3x coverage; Win rate ≥ 25%; Forecast accuracy ≥ 90%; Quota attainment 100%
+
+
+TASK: Create a professional-grade structure deliverable for your company.
+
+As an expert, you understand:
+- Industry best practices and frameworks
+- How to balance data-driven insights with practical execution
+- The importance of clear documentation and change management
+- That sales ops exists to make the sales team more effective
+
+APPROACH:
+1. Start with the business context and goals
+2. Apply relevant frameworks and methodologies
+3. Provide specific, actionable recommendations
+4. Include templates, examples, and implementation steps
+5. Define success metrics and how to track them
+
+Work step-by-step to produce a comprehensive deliverable that includes:
+✓ Executive summary
+✓ Detailed methodology/framework
+✓ Specific recommendations for your company
+✓ Implementation plan with timeline
+✓ Templates and tools needed
+✓ Success metrics and tracking approach
+✓ Common pitfalls to avoid`
+  },
   { id: 's5', unitId: 'sales', icon: 'Database', name: 'Edin Hodzic', role: 'CRM-Datenintegrität & Validierung', exp: '8J', bio: 'Sicherstellung höchster Datenqualität im Salesforce/Expertico Stack.', think: 'Source -> Validation -> Sync', modes: [{id:'data', label:'Data Health Report', help:''}], checklist: ['Duplicate Check', 'Field Completion'] },
   { id: 's6', unitId: 'sales', icon: 'Coins', name: 'Eliane Moser', role: 'Provisionsmodelle & SPIF', exp: '11J', bio: 'Entwicklung von Anreizsystemen zur Motivationssteigerung.', think: 'KPI -> Incentive -> Payout', modes: [{id:'bonus', label:'SPIF Config', help:''}], checklist: ['Tax Rules', 'Budget Cap'] },
   { id: 's7', unitId: 'sales', icon: 'BarChart3', name: 'Olena Boyko', role: 'Performance-Visualisierung & Dashboards', exp: '9J', bio: 'Expertin für Echtzeit-Sales-Monitoring und BI-Schnittstellen.', think: 'Data -> Metric -> Visualization', modes: [{id:'viz', label:'Executive Dash', help:''}], checklist: ['Drill-down capability', 'Real-time check'] },
@@ -290,8 +360,18 @@ export const DEFAULTS = {
 };
 
 export const INTEGRATIONS = [
-  { id: 'g1', name: 'Gemini 3 Pro', provider: 'Google Cloud', type: 'LLM' },
-  { id: 't1', name: 'Twilio Voice', provider: 'Twilio', type: 'Voice' }
+  { id: 'cal', name: 'Cal.ai', provider: 'Cal.com', status: 'connected', description: 'KI-gestützte Terminplanung und Meeting-Management', emoji: '📅', type: 'Konfigurieren' },
+  { id: '11labs', name: 'ElevenLabs', provider: 'ElevenLabs', status: 'not_configured', description: 'Text-to-Speech und Voice-Cloning', emoji: '🎙️', type: 'Konfigurieren' },
+  { id: 'vapi', name: 'Vapi', provider: 'Vapi AI', status: 'connected', description: 'Voice AI für Telefongespräche', emoji: '☎️', type: 'Konfigurieren' },
+  { id: 'n8n', name: 'N8N', provider: 'n8n.io', status: 'not_configured', description: 'Workflow-Automatisierung und Integration', emoji: '⚡', type: 'Konfigurieren' },
+  { id: 'twilio', name: 'Twilio', provider: 'Twilio Inc.', status: 'connected', description: 'SMS, Voice und WhatsApp Business API', emoji: '💬', type: 'Konfigurieren' },
+  { id: 'resend', name: 'Resend', provider: 'Resend Labs', status: 'connected', description: 'Moderner E-Mail-Versand für Entwickler', emoji: '📧', type: 'Konfigurieren' },
+  { id: 'gmail', name: 'Gmail', provider: 'Google', status: 'connected', description: 'Google Mail Integration', emoji: '📮', type: 'Konfigurieren' },
+  { id: 'gcal', name: 'Google Calendar', provider: 'Google', status: 'connected', description: 'Kalender-Synchronisation', emoji: '📆', type: 'Konfigurieren' },
+  { id: 'msmail', name: 'Microsoft Mail', provider: 'Microsoft', status: 'not_configured', description: 'Outlook & Office 365 E-Mail Anbindung', emoji: '📧', type: 'Konfigurieren' },
+  { id: 'mscal', name: 'Microsoft Calendar', provider: 'Microsoft', status: 'not_configured', description: 'Outlook Kalender Synchronisation', emoji: '📅', type: 'Konfigurieren' },
+  { id: 'gcon', name: 'Google Console', provider: 'Google', status: 'not_configured', description: 'API & Entwickler-Konsole', emoji: '⚙️', type: 'Tool öffnen' },
+  { id: 'gana', name: 'Google Analytics', provider: 'Google', status: 'not_configured', description: 'Website-Analyse und Tracking', emoji: '📊', type: 'Konfigurieren' }
 ];
 
 export const INDUSTRY_TEMPLATES: Record<string, { label: string; channels: string }> = {
